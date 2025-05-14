@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sostwop - Earn Coins</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            light: '#a855f7',
+                            DEFAULT: '#8b5cf6',
+                            dark: '#7e22ce',
+                        },
+                        dark: {
+                            DEFAULT: '#0f172a',
+                            light: '#1e293b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <!-- Header with balances -->
+        <header class="bg-dark-light rounded-xl p-6 shadow-lg mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+                        <i class="fas fa-coins mr-2"></i>Sostwop
+                    </h1>
+                    <p class="text-gray-400 mt-1">Earn coins, convert to cash</p>
+                </div>
+                <div class="flex space-x-6">
+                    <div class="bg-purple-900/30 px-6 py-3 rounded-lg flex items-center">
+                        <i class="fas fa-coins text-yellow-400 text-xl mr-2"></i>
+                        <div>
+                            <p class="text-sm text-gray-300">Balance</p>
+                            <p class="text-xl font-bold" id="coinsBalance">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-purple-900/30 px-6 py-3 rounded-lg flex items-center">
+                        <i class="fas fa-dollar-sign text-green-400 text-xl mr-2"></i>
+                        <div>
+                            <p class="text-sm text-gray-300">Cash</p>
+                            <p class="text-xl font-bold" id="cashBalance">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main tap area -->
+        <main class="text-center mb-12">
+            <div class="mb-6">
+                <div class="bg-dark-light rounded-xl p-4 inline-block">
+                    <div class="w-64 h-4 bg-purple-900/30 rounded-full overflow-hidden">
+                        <div id="dailyProgress" class="h-full bg-gradient-to-r from-purple-400 to-purple-600 progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">
+                        <span id="dailyCounter">0</span>/300 coins today
+                    </p>
+                </div>
+            </div>
+            
+            <button id="tapButton" class="w-64 h-64 bg-gradient-to-br from-purple-400 to-purple-700 rounded-full shadow-2xl flex items-center justify-center animate-pulse transform transition-transform hover:scale-105 active:scale-95">
+                <div class="text-center">
+                    <i class="fas fa-hand-pointer text-5xl mb-2"></i>
+                    <p class="text-xl font-bold">Tap to Earn</p>
+                    <p class="text-sm opacity-80 mt-1">+1 coin per tap</p>
+                </div>
+            </button>
+            
+            <p id="tapCounter" class="text-gray-400 mt-4">
+                <span id="tapCount">0</span> taps today
+            </p>
+            
+            <div class="mt-8">
+                <button id="convertBtn" class="bg-purple-900/50 hover:bg-purple-900/70 text-white py-3 px-6 rounded-lg font-medium transform transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100" disabled>
+                    <i class="fas fa-exchange-alt mr-2"></i>Convert 1,000,000 coins → $100
+                </button>
+            </div>
+        </main>
+
+        <!-- Upgrades section -->
+        <section class="bg-dark-light rounded-xl p-6 shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-level-up-alt mr-3 text-purple-500"></i>
+                <span class="bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">Upgrades</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Upgrade 1 -->
+                <div class="bg-dark rounded-lg p-5 border border-purple-900/50 hover:border-purple-500 transition-all">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-bolt text-yellow-400 mr-2"></i>
+                            Fast Taps
+                        </h3>
+                        <span class="bg-purple-900/70 text-sm py-1 px-3 rounded-full">Level <span class="upgrade-level">0</span></span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Increase tap speed (+0.25s cooldown reduction)</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-400 font-bold">50,000 coins</span>
+                        <button class="upgrade-btn bg-purple-600 hover:bg-purple-700 text-white py-1 px-4 rounded text-sm" data-upgrade="speed" data-cost="50000">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Upgrade 2 -->
+                <div class="bg-dark rounded-lg p-5 border border-purple-900/50 hover:border-purple-500 transition-all">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-coins text-yellow-400 mr-2"></i>
+                            Coin Multiplier
+                        </h3>
+                        <span class="bg-purple-900/70 text-sm py-1 px-3 rounded-full">Level <span class="upgrade-level">0</span></span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Earn more coins per tap (+1 coin per level)</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-400 font-bold">100,000 coins</span>
+                        <button class="upgrade-btn bg-purple-600 hover:bg-purple-700 text-white py-1 px-4 rounded text-sm" data-upgrade="multiplier" data-cost="100000">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Upgrade 3 -->
+                <div class="bg-dark rounded-lg p-5 border border-purple-900/50 hover:border-purple-500 transition-all">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-clock text-yellow-400 mr-2"></i>
+                            Daily Limit
+                        </h3>
+                        <span class="bg-purple-900/70 text-sm py-1 px-3 rounded-full">Level <span class="upgrade-level">0</span></span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Increase daily coin limit (+100 coins per level)</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-400 font-bold">200,000 coins</span>
+                        <button class="upgrade-btn bg-purple-600 hover:bg-purple-700 text-white py-1 px-4 rounded text-sm" data-upgrade="limit" data-cost="200000">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-light py-4 text-center text-gray-500 text-sm">
+        <p>© 2023 Sostwop. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Game state
+        const gameState = {
+            coins: 0,
+            cash: 0,
+            tapsToday: 0,
+            dailyLimit: 300,
+            lastTapDate: null,
+            upgrades: {
+                speed: { level: 0, cost: 50000 },
+                multiplier: { level: 0, cost: 100000 },
+                limit: { level: 0, cost: 200000 }
+            },
+            cooldown: 1000, // Default 1 second cooldown between taps
+            lastTapTime: 0
+        };
+
+        // DOM elements
+        const coinsBalanceEl = document.getElementById('coinsBalance');
+        const cashBalanceEl = document.getElementById('cashBalance');
+        const tapButtonEl = document.getElementById('tapButton');
+        const tapCountEl = document.getElementById('tapCount');
+        const dailyCounterEl = document.getElementById('dailyCounter');
+        const dailyProgressEl = document.getElementById('dailyProgress');
+        const convertBtnEl = document.getElementById('convertBtn');
+        const upgradeButtons = document.querySelectorAll('.upgrade-btn');
+
+        // Initialize game
+        function initGame() {
+            const savedState = localStorage.getItem('sostwopGameState');
+            if (savedState) {
+                Object.assign(gameState, JSON.parse(savedState));
+            }
+            
+            // Check if it's a new day
+            const today = new Date().toDateString();
+            if (gameState.lastTapDate !== today) {
+                gameState.tapsToday = 0;
+                gameState.lastTapDate = today;
+            }
+            
+            updateUI();
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            coinsBalanceEl.textContent = gameState.coins.toLocaleString();
+            cashBalanceEl.textContent = gameState.cash.toLocaleString();
+            tapCountEl.textContent = gameState.tapsToday;
+            dailyCounterEl.textContent = Math.min(gameState.tapsToday, gameState.dailyLimit);
+            
+            const progressPercent = Math.min((gameState.tapsToday / gameState.dailyLimit) * 100, 100);
+            dailyProgressEl.style.width = `${progressPercent}%`;
+            
+            // Update convert button state
+            convertBtnEl.disabled = gameState.coins < 1000000;
+            
+            // Update upgrades
+            upgradeButtons.forEach(btn => {
+                const upgradeType = btn.dataset.upgrade;
+                const cost = gameState.upgrades[upgradeType].cost;
+                
+                btn.disabled = gameState.coins < cost;
+                btn.parentElement.querySelector('span.text-purple-400').textContent = `${cost.toLocaleString()} coins`;
+                
+                // Update level display
+                const levelEl = btn.closest('.bg-dark').querySelector('.upgrade-level');
+                levelEl.textContent = gameState.upgrades[upgradeType].level;
+            });
+            
+            // Save game state
+            localStorage.setItem('sostwopGameState', JSON.stringify(gameState));
+        }
+
+        // Handle tap
+        function handleTap() {
+            const now = Date.now();
+            
+            // Check cooldown
+            if (now - gameState.lastTapTime < gameState.cooldown) {
+                return;
+            }
+            
+            // Check daily limit
+            if (gameState.tapsToday >= gameState.dailyLimit) {
+                alert("You've reached your daily limit of taps! Upgrade your daily limit to earn more.");
+                return;
+            }
+            
+            gameState.lastTapTime = now;
+            gameState.tapsToday++;
+            
+            // Calculate coins earned (1 base + multiplier level)
+            const coinsEarned = 1 + gameState.upgrades.multiplier.level;
+            gameState.coins += coinsEarned;
+            
+            updateUI();
+            
+            // Create coin visual effect
+            const coinEffect = document.createElement('div');
+            coinEffect.className = 'absolute text-yellow-400 pointer-events-none animate-bounce';
+            coinEffect.innerHTML = `<i class="fas fa-coins"></i> +${coinsEarned}`;
+            coinEffect.style.left = `${Math.random() * 100}%`;
+            coinEffect.style.top = `${Math.random() * 80 + 10}%`;
+            tapButtonEl.appendChild(coinEffect);
+            
+            // Remove after animation
+            setTimeout(() => {
+                coinEffect.remove();
+            }, 1000);
+        }
+
+        // Handle convert to cash
+        function handleConvert() {
+            if (gameState.coins < 1000000) {
+                alert("You need at least 1,000,000 coins to convert to $100!");
+                return;
+            }
+            
+            if (confirm("Convert 1,000,000 coins to $100?")) {
+                gameState.coins -= 1000000;
+                gameState.cash += 100;
+                updateUI();
+                
+                // Create cash effect
+                const cashEffect = document.createElement('div');
+                cashEffect.className = 'fixed inset-0 flex items-center justify-center pointer-events-none z-50';
+                cashEffect.innerHTML = `
+                    <div class="bg-green-500/80 text-white py-4 px-8 rounded-lg shadow-2xl text-2xl font-bold animate-bounce">
+                        +$100 Converted!
+                    </div>
+                `;
+                document.body.appendChild(cashEffect);
+                
+                setTimeout(() => {
+                    cashEffect.remove();
+                }, 2000);
+            }
+        }
+
+        // Handle upgrades
+        function handleUpgrade(e) {
+            const upgradeType = e.target.dataset.upgrade;
+            const cost = parseInt(e.target.dataset.cost);
+            
+            if (gameState.coins < cost) {
+                alert("Not enough coins for this upgrade!");
+                return;
+            }
+            
+            gameState.coins -= cost;
+            gameState.upgrades[upgradeType].level++;
+            
+            // Apply upgrade effects
+            switch (upgradeType) {
+                case 'speed':
+                    gameState.cooldown = Math.max(100, 1000 - (gameState.upgrades.speed.level * 250));
+                    break;
+                case 'multiplier':
+                    // Multiplier is applied in handleTap()
+                    break;
+                case 'limit':
+                    gameState.dailyLimit = 300 + (gameState.upgrades.limit.level * 100);
+                    break;
+            }
+            
+            // Increase cost for next level
+            gameState.upgrades[upgradeType].cost = Math.floor(cost * 1.5);
+            
+            updateUI();
+            
+            // Upgrade effect
+            const upgradeEffect = document.createElement('div');
+            upgradeEffect.className = 'fixed inset-0 flex items-center justify-center pointer-events-none z-50';
+            upgradeEffect.innerHTML = `
+                <div class="bg-purple-600/80 text-white py-4 px-8 rounded-lg shadow-2xl text-2xl font-bold animate-pulse">
+                    Upgrade Purchased!
+                </div>
+            `;
+            document.body.appendChild(upgradeEffect);
+            
+            setTimeout(() => {
+                upgradeEffect.remove();
+            }, 1500);
+        }
+
+        // Event listeners
+        tapButtonEl.addEventListener('click', handleTap);
+        convertBtnEl.addEventListener('click', handleConvert);
+        upgradeButtons.forEach(btn => {
+            btn.addEventListener('click', handleUpgrade);
+        });
+
+        // Initialize the game
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
